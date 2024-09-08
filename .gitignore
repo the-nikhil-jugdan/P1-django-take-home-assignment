@@ -1,3 +1,4 @@
 .idea/
 *.pyc
 /rakt_food_app/db.sqlite3
+.env
