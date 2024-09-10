@@ -5,6 +5,7 @@ import os
 import datetime
 from django.contrib.gis.geos import Point
 from decimal import Decimal
+import numpy as np
 
 dTypes = {
     "Address": "string",
@@ -48,6 +49,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         file = kwargs["file"]
         data = pd.read_csv(f"{os.getcwd()}/{file}", dtype=dTypes)
+        data["X"].fillna(-1, inplace=True)
+        data["Y"].fillna(-1, inplace=True)
         for index, row in data.iterrows():
             FoodTruck.objects.update_or_create(
                 location_id=row["locationid"],
@@ -74,12 +77,10 @@ class Command(BaseCommand):
                     "location": Point(
                         (Decimal(row["Latitude"]), Decimal(row["Longitude"])), srid=4326
                     ),
-                    # "x_coordinate": row["X"],
-                    # "y_coordinate": row["Y"],
+                    "x_coordinate": None if row["X"] == -1 else Decimal(row["X"]),
+                    "y_coordinate": None if row["Y"] == -1 else Decimal(row["Y"]),
                 },
                 create_defaults={
-                    "x_coordinate": 0,
-                    "y_coordinate": 0,
                     "approved_date": datetime.datetime.now(),
                     "received_date": datetime.datetime.now(),
                     "expiration_date": datetime.datetime.now(),

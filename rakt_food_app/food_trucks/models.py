@@ -16,8 +16,8 @@ class FoodTruck(models.Model):
     permit = models.CharField(max_length=20)
     status = models.CharField(max_length=20, choices=StatusChoices.choices)
     food_items = models.TextField()
-    x_coordinate = models.DecimalField(max_digits=30, decimal_places=15)
-    y_coordinate = models.DecimalField(max_digits=30, decimal_places=15)
+    x_coordinate = models.DecimalField(max_digits=30, decimal_places=15, null=True)
+    y_coordinate = models.DecimalField(max_digits=30, decimal_places=15, null=True)
 
     schedule = models.URLField(max_length=500)
     days_hours = models.CharField(max_length=100)
