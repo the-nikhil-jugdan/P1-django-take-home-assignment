@@ -21,9 +21,9 @@ class FoodTruck(models.Model):
 
     schedule = models.URLField(max_length=500)
     days_hours = models.CharField(max_length=100)
-    approved_date = models.DateField()
-    received_date = models.DateField()
-    expiration_date = models.DateField()
+    approved_date = models.DateField(null=True)
+    received_date = models.DateField(null=True)
+    expiration_date = models.DateField(null=True)
 
     prior_permit = models.IntegerField(null=True)
 

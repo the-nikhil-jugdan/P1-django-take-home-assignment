@@ -51,6 +51,9 @@ class Command(BaseCommand):
         data = pd.read_csv(f"{os.getcwd()}/{file}", dtype=dTypes)
         data["X"].fillna(-1, inplace=True)
         data["Y"].fillna(-1, inplace=True)
+        data["Approved"].fillna("", inplace=True)
+        data["Received"].fillna("", inplace=True)
+        data["ExpirationDate"].fillna("", inplace=True)
         for index, row in data.iterrows():
             FoodTruck.objects.update_or_create(
                 location_id=row["locationid"],
@@ -79,14 +82,24 @@ class Command(BaseCommand):
                     ),
                     "x_coordinate": None if row["X"] == -1 else Decimal(row["X"]),
                     "y_coordinate": None if row["Y"] == -1 else Decimal(row["Y"]),
-                },
-                create_defaults={
-                    "approved_date": datetime.datetime.now(),
-                    "received_date": datetime.datetime.now(),
-                    "expiration_date": datetime.datetime.now(),
-                    "location": Point(
-                        (Decimal(row["Latitude"]), Decimal(row["Longitude"])), srid=4326
+                    "approved_date": (
+                        datetime.datetime.strptime(
+                            row["Approved"].split()[0], "%m/%d/%Y"
+                        )
+                        if row["Approved"] != ""
+                        else None
+                    ),
+                    "received_date": (
+                        datetime.datetime.strptime(row["Received"], "%Y%m%d")
+                        if row["Approved"] != ""
+                        else None
+                    ),
+                    "expiration_date": (
+                        datetime.datetime.strptime(
+                            row["ExpirationDate"].split()[0], "%m/%d/%Y"
+                        )
+                        if row["Approved"] != ""
+                        else None
                     ),
                 },
-                # TODO: Improve Data reading into DB
             )
